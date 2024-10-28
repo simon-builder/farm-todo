@@ -12,4 +12,3 @@ class ToDoCRUD:
             "items": []
         })
         return TodoList(name=name)
-        # return TodoList(f"Added {response.inserted_id} with the name {name}")
