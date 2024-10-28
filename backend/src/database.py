@@ -10,6 +10,7 @@ def get_db():
     
     if client is None:
         client = AsyncIOMotorClient("mongodb://localhost:27017")
+        # client = AsyncIOMotorClient(settings.mongodb_url)
         
     db = client["todo_database"]  # Replace with your actual database name
     yield db
