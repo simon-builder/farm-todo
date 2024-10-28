@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from src.models import TodoList
+from crud import ToDoCRUD
 
 
 router = APIRouter()
@@ -13,10 +14,11 @@ async def get_all_lists():
 
 @router.post("/", response_model=str)
 async def create_todo_list(name: str):
-    return "Test"
     
-    # try:
-    #     todo_list = await crud.create_item(name)
-    #     return todo_list
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
+    try:
+        #todo_list = await crud.create_item(name)
+        # return todo_list
+        todo_list = await crud.create_item(name)
+        return "Test"
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
