@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from src.crud import ToDoCRUD
 from src.database import get_db
 from src.config import settings
-from src.models import TodoList
+from src.schemas import TodoList
 
 router = APIRouter()
 

@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorCollection
-from .models import TodoList  # Import your Pydantic model
+from .schemas import TodoList  # Import your Pydantic model
 
 class ToDoCRUD:
     def __init__(self, db: AsyncIOMotorCollection):
