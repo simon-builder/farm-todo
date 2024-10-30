@@ -28,3 +28,14 @@ async def create_todo_list(name: TodoList, db: AsyncIOMotorDatabase = Depends(ge
             status_code=500,
             detail=f" Something went wrong in create_todo_list: {str(e)}",
         )
+
+@router.delete("/{list_id}")
+async def delete_list(list_id: str, db: AsyncIOMotorDatabase = Depends(get_db)):
+    crud = ToDoCRUD(db)
+    success = await crud.delete_list(list_id)
+    if not success:
+        raise HTTPException(
+            status_code=404, 
+            detail="List not found or invalid ID format"
+        )
+    return {"message": "List deleted successfully"}

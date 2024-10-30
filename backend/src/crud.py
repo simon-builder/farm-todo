@@ -1,5 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorCollection
-from .schemas import TodoList  # Import your Pydantic model
+from .schemas import TodoList
+from bson import ObjectId
+from bson.errors import InvalidId
 
 
 class ToDoCRUD:
@@ -11,6 +13,12 @@ class ToDoCRUD:
         return [TodoList(id=str(doc["_id"]), name=doc["name"]) async for doc in docs]
 
     async def create_item(self, name: str) -> TodoList:
-        # Insert a new item into the collection
         response = await self.collection.insert_one({"name": name, "items": []})
         return TodoList(name=name)
+
+    async def delete_list(self, list_id: str) -> bool:
+        try:
+            result = await self.collection.delete_one({"_id": ObjectId(list_id)})
+            return result.deleted_count > 0
+        except InvalidId:
+            return False  # Return False for invalid ID format
