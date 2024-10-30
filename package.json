@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/next": "^8.0.7",
+    "next": "^15.0.2"
+  }
+}

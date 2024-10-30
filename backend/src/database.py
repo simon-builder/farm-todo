@@ -9,10 +9,9 @@ def get_db():
     global client, database
     
     if client is None:
-        client = AsyncIOMotorClient("mongodb://localhost:27017")
-        # client = AsyncIOMotorClient(settings.mongodb_url)
+        client = AsyncIOMotorClient(settings.mongodb_url)
         
-    db = client["todo_database"]  # Replace with your actual database name
+    db = client["todo_database"]
     yield db
     
 def get_collection(collection_name: str):
