@@ -77,7 +77,7 @@ const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
       <div className="mb-12 text-center">
-        <h1 className="text-3xl font-medium bg-gradient-to-r from-blue-400 to-purple-400 inline-block text-transparent bg-clip-text">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 inline-block text-transparent bg-clip-text animate-gradient bg-300% hover:scale-105 transition-transform">
           Lists
         </h1>
         <p className="text-sm mt-2 text-gray-400">Organize your tasks with style</p>
