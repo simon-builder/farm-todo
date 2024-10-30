@@ -7,8 +7,8 @@ class ToDoCRUD:
         self.collection = db["todo_lists"]
 
     async def list_todo_lists(self) -> list[TodoList]:
-        cursor = self.collection.find({}, {"name": 1, "_id": 0})
-        return [TodoList(**doc) async for doc in cursor]
+        docs = self.collection.find({}, {"name": 1, "_id": 1})
+        return [TodoList(id=str(doc["_id"]), name=doc["name"]) async for doc in docs]
 
     async def create_item(self, name: str) -> TodoList:
         # Insert a new item into the collection
