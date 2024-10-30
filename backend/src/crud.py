@@ -22,3 +22,15 @@ class ToDoCRUD:
             return result.deleted_count > 0
         except InvalidId:
             return False  # Return False for invalid ID format
+
+    async def update_list(self, list_id: str, name: str) -> TodoList | None:
+        try:
+            result = await self.collection.update_one(
+                {"_id": ObjectId(list_id)},
+                {"$set": {"name": name}}
+            )
+            if result.modified_count > 0:
+                return TodoList(id=list_id, name=name)
+            return None
+        except InvalidId:
+            return None

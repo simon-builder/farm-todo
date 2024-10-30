@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from "react";
-import { createList } from '../actions';
+import { createList, deleteList } from '../actions';
+import { FaTrash, FaChevronRight } from 'react-icons/fa';
+import ConfirmDialog from './ConfirmDialog';
 
 interface ListItem {
   id: string;
@@ -13,6 +15,7 @@ interface ListDisplayProps {
 
 const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
   const [newListName, setNewListName] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const handleCreateList = async () => {
     if (!newListName.trim()) return;
@@ -23,6 +26,23 @@ const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
       window.location.reload();
     } catch (error) {
       console.error('Error:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      const result = await deleteList(deleteId);
+      if (result === null) {
+        console.error('Failed to delete list');
+        return;
+      }
+      window.location.reload();
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -58,17 +78,29 @@ const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
             className="bg-white/5 backdrop-blur-lg rounded-lg p-4 hover:bg-white/10 transition-all cursor-pointer flex items-center justify-between group"
           >
             <span className="font-medium">{list.name}</span>
-            <svg 
-              className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
+            <div className="flex items-center space-x-3">
+              <FaTrash 
+                className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-500"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteId(list.id);
+                }}
+              />
+              <FaChevronRight 
+                className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" 
+              />
+            </div>
           </div>
         ))}
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteId !== null}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Delete List"
+        message="Are you sure you want to delete this list? This action cannot be undone."
+      />
     </div>
   );
 };
