@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import { createList, deleteList } from '../actions';
+import { createList, deleteList, updateList } from '../actions';
 import { FaTrash, FaChevronRight } from 'react-icons/fa';
 import ConfirmDialog from './ConfirmDialog';
 
@@ -16,6 +16,8 @@ interface ListDisplayProps {
 const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
   const [newListName, setNewListName] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
 
   const handleCreateList = async () => {
     if (!newListName.trim()) return;
@@ -44,6 +46,32 @@ const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
     } finally {
       setDeleteId(null);
     }
+  };
+
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>, list: ListItem) => {
+    if (e.key === 'Escape') {
+      setEditingId(null);
+      setEditingName("");
+    } else if (e.key === 'Enter') {
+      if (editingName.trim() && editingName !== list.name) {
+        try {
+          const result = await updateList(list.id, editingName.trim());
+          if (result === null) {
+            console.error('Failed to update list');
+            return;
+          }
+          window.location.reload();
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
+      setEditingId(null);
+    }
+  };
+
+  const handleBlur = () => {
+    setEditingId(null);
+    setEditingName("");
   };
 
   return (
@@ -77,7 +105,27 @@ const ListDisplay: React.FC<ListDisplayProps> = ({ lists: initialLists }) => {
             key={list.id}
             className="bg-white/5 backdrop-blur-lg rounded-lg p-4 hover:bg-white/10 transition-all cursor-pointer flex items-center justify-between group"
           >
-            <span className="font-medium">{list.name}</span>
+            {editingId === list.id ? (
+              <input
+                type="text"
+                value={editingName}
+                onChange={(e) => setEditingName(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, list)}
+                onBlur={handleBlur}
+                className="bg-white/10 rounded px-2 py-1 outline-none focus:ring-1 focus:ring-blue-500/50"
+                autoFocus
+              />
+            ) : (
+              <span 
+                className="font-medium"
+                onDoubleClick={() => {
+                  setEditingId(list.id);
+                  setEditingName(list.name);
+                }}
+              >
+                {list.name}
+              </span>
+            )}
             <div className="flex items-center space-x-3">
               <FaTrash 
                 className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-red-400 hover:text-red-500"
