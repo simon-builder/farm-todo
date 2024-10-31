@@ -1,0 +1,37 @@
+services:
+  backend:
+    image: simon-builder/farm-todo:backend-1.0
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - DOCKER_ENV=true
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+  frontend:
+    image: simon-builder/farm-todo:frontend-1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    depends_on:
+      - backend
+    networks:
+      - app-network
+  mongodb:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge

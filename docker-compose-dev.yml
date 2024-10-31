@@ -1,11 +1,12 @@
-version: '3.8'
 services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/backend_app:ro
     environment:
       - MONGODB_URL=mongodb://mongodb:27017
       - DOCKER_ENV=true
@@ -15,27 +16,28 @@ services:
       - .env
     networks:
       - app-network
+
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app:ro
       - /app/.next
       - /app/node_modules
     environment:
       - NEXT_PUBLIC_API_URL=http://backend:8000
     depends_on:
       - backend
-    networks:
-      - app-network
     env_file:
       - .env
+    networks:
+      - app-network
 
   mongodb:
-    image: mongo:latest
+    image: mongo:6.0
     ports:
       - "27017:27017"
     volumes:
